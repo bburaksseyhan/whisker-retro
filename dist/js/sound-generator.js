@@ -95,37 +95,41 @@ class SoundGenerator {
 
 // Generate and save sound files
 async function generateSoundFiles() {
-    const generator = new SoundGenerator();
-    
-    // Generate hover sound
-    const hoverSound = await generator.generateHoverSound();
-    const hoverUrl = URL.createObjectURL(hoverSound);
-    const hoverLink = document.createElement('a');
-    hoverLink.href = hoverUrl;
-    hoverLink.download = 'assets/audio/hover.wav';
-    document.body.appendChild(hoverLink);
-    hoverLink.click();
-    document.body.removeChild(hoverLink);
-    
-    // Generate click sound
-    const clickSound = await generator.generateClickSound();
-    const clickUrl = URL.createObjectURL(clickSound);
-    const clickLink = document.createElement('a');
-    clickLink.href = clickUrl;
-    clickLink.download = 'assets/audio/click.wav';
-    document.body.appendChild(clickLink);
-    clickLink.click();
-    document.body.removeChild(clickLink);
-    
-    // Generate background music
-    const bgm = await generator.generateBGM();
-    const bgmUrl = URL.createObjectURL(bgm);
-    const bgmLink = document.createElement('a');
-    bgmLink.href = bgmUrl;
-    bgmLink.download = 'assets/audio/bgm.mp3';
-    document.body.appendChild(bgmLink);
-    bgmLink.click();
-    document.body.removeChild(bgmLink);
+    try {
+        const generator = new SoundGenerator();
+        
+        // Generate hover sound
+        const hoverSound = await generator.generateHoverSound();
+        const hoverUrl = URL.createObjectURL(hoverSound);
+        const hoverLink = document.createElement('a');
+        hoverLink.href = hoverUrl;
+        hoverLink.download = 'hover.wav';
+        document.body.appendChild(hoverLink);
+        hoverLink.click();
+        document.body.removeChild(hoverLink);
+        
+        // Generate click sound
+        const clickSound = await generator.generateClickSound();
+        const clickUrl = URL.createObjectURL(clickSound);
+        const clickLink = document.createElement('a');
+        clickLink.href = clickUrl;
+        clickLink.download = 'click.wav';
+        document.body.appendChild(clickLink);
+        clickLink.click();
+        document.body.removeChild(clickLink);
+        
+        // Generate background music
+        const bgm = await generator.generateBGM();
+        const bgmUrl = URL.createObjectURL(bgm);
+        const bgmLink = document.createElement('a');
+        bgmLink.href = bgmUrl;
+        bgmLink.download = 'bgm.mp3';
+        document.body.appendChild(bgmLink);
+        bgmLink.click();
+        document.body.removeChild(bgmLink);
+    } catch (error) {
+        console.log('Error generating sound files:', error);
+    }
 }
 
 // Generate sound files when the script loads

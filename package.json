@@ -4,7 +4,7 @@
   "description": "A retro-style browser game about a cat's neighborhood adventures",
   "main": "index.html",
   "scripts": {
-    "build": "mkdir -p dist/assets/audio && cp -r index.html js dist/ && cp -r assets/* dist/assets/",
+    "build": "mkdir -p dist/assets/audio && cp -r index.html js dist/ && cp -r assets dist/ || true",
     "start": "python3 -m http.server 8000"
   },
   "keywords": [
