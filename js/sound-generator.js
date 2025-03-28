@@ -98,15 +98,36 @@ async function generateSoundFiles() {
     try {
         const generator = new SoundGenerator();
         
+        // Create download container
+        const downloadContainer = document.createElement('div');
+        downloadContainer.style.position = 'fixed';
+        downloadContainer.style.top = '10px';
+        downloadContainer.style.left = '10px';
+        downloadContainer.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
+        downloadContainer.style.padding = '20px';
+        downloadContainer.style.borderRadius = '10px';
+        downloadContainer.style.color = 'white';
+        downloadContainer.style.fontFamily = 'Press Start 2P, cursive';
+        downloadContainer.style.fontSize = '12px';
+        downloadContainer.style.zIndex = '1000';
+        
+        // Add instructions
+        const instructions = document.createElement('div');
+        instructions.innerHTML = 'Ses dosyalarını indirin ve assets/audio klasörüne taşıyın:<br>';
+        downloadContainer.appendChild(instructions);
+        
         // Generate hover sound
         const hoverSound = await generator.generateHoverSound();
         const hoverUrl = URL.createObjectURL(hoverSound);
         const hoverLink = document.createElement('a');
         hoverLink.href = hoverUrl;
         hoverLink.download = 'hover.wav';
-        document.body.appendChild(hoverLink);
-        hoverLink.click();
-        document.body.removeChild(hoverLink);
+        hoverLink.innerHTML = 'hover.wav<br>';
+        hoverLink.style.color = '#FFFF00';
+        hoverLink.style.textDecoration = 'none';
+        hoverLink.style.marginBottom = '10px';
+        hoverLink.style.display = 'block';
+        downloadContainer.appendChild(hoverLink);
         
         // Generate click sound
         const clickSound = await generator.generateClickSound();
@@ -114,9 +135,12 @@ async function generateSoundFiles() {
         const clickLink = document.createElement('a');
         clickLink.href = clickUrl;
         clickLink.download = 'click.wav';
-        document.body.appendChild(clickLink);
-        clickLink.click();
-        document.body.removeChild(clickLink);
+        clickLink.innerHTML = 'click.wav<br>';
+        clickLink.style.color = '#FFFF00';
+        clickLink.style.textDecoration = 'none';
+        clickLink.style.marginBottom = '10px';
+        clickLink.style.display = 'block';
+        downloadContainer.appendChild(clickLink);
         
         // Generate background music
         const bgm = await generator.generateBGM();
@@ -124,9 +148,28 @@ async function generateSoundFiles() {
         const bgmLink = document.createElement('a');
         bgmLink.href = bgmUrl;
         bgmLink.download = 'bgm.mp3';
-        document.body.appendChild(bgmLink);
-        bgmLink.click();
-        document.body.removeChild(bgmLink);
+        bgmLink.innerHTML = 'bgm.mp3<br>';
+        bgmLink.style.color = '#FFFF00';
+        bgmLink.style.textDecoration = 'none';
+        bgmLink.style.marginBottom = '10px';
+        bgmLink.style.display = 'block';
+        downloadContainer.appendChild(bgmLink);
+        
+        // Add close button
+        const closeButton = document.createElement('button');
+        closeButton.innerHTML = 'Kapat';
+        closeButton.style.backgroundColor = '#FF4444';
+        closeButton.style.border = 'none';
+        closeButton.style.color = 'white';
+        closeButton.style.padding = '5px 10px';
+        closeButton.style.cursor = 'pointer';
+        closeButton.style.marginTop = '10px';
+        closeButton.onclick = () => downloadContainer.remove();
+        downloadContainer.appendChild(closeButton);
+        
+        // Add to document
+        document.body.appendChild(downloadContainer);
+        
     } catch (error) {
         console.log('Error generating sound files:', error);
     }

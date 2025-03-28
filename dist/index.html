@@ -2,20 +2,40 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#87CEEB">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>Whisker Quest</title>
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            position: fixed;
+        }
+
         body {
             margin: 0;
             padding: 0;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
+            min-height: 100vh;
             background-color: #87CEEB;
             font-family: 'Press Start 2P', cursive;
-            overflow: hidden;
+            touch-action: manipulation;
+            -webkit-overflow-scrolling: none;
+            overscroll-behavior: none;
         }
         
         #game-container {
@@ -23,12 +43,23 @@
             box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
             border-radius: 10px;
             overflow: hidden;
+            width: 100%;
+            height: 100vh;
+            max-width: 800px;
+            max-height: 600px;
+            margin: auto;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
         
         canvas {
             display: block;
             image-rendering: pixelated;
             image-rendering: crisp-edges;
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
         }
         
         /* Retro scanline effect */
@@ -78,6 +109,8 @@
             justify-content: center;
             align-items: center;
             transition: background-color 0.3s;
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
         }
         
         #sound-control:hover {
@@ -103,6 +136,68 @@
         
         #game-container {
             animation: glow 3s infinite;
+        }
+
+        /* Mobile-specific styles */
+        @media (max-width: 768px) {
+            #game-container {
+                border-radius: 0;
+                max-height: 100vh;
+                box-shadow: none;
+            }
+
+            .crt-edge {
+                border-radius: 0;
+                box-shadow: none;
+            }
+
+            #sound-control {
+                top: 10px;
+                right: 10px;
+                width: 35px;
+                height: 35px;
+            }
+
+            #sound-control.muted::after,
+            #sound-control:not(.muted)::after {
+                font-size: 18px;
+            }
+
+            /* Prevent pull-to-refresh */
+            body {
+                position: fixed;
+                width: 100%;
+                height: 100%;
+                overflow: hidden;
+                overscroll-behavior: none;
+            }
+
+            /* Prevent text selection */
+            * {
+                -webkit-user-select: none;
+                -moz-user-select: none;
+                -ms-user-select: none;
+                user-select: none;
+            }
+        }
+
+        /* Landscape mode adjustments */
+        @media (orientation: landscape) and (max-height: 500px) {
+            #game-container {
+                max-height: 100vh;
+            }
+
+            #sound-control {
+                top: 5px;
+                right: 5px;
+                width: 30px;
+                height: 30px;
+            }
+
+            #sound-control.muted::after,
+            #sound-control:not(.muted)::after {
+                font-size: 16px;
+            }
         }
     </style>
     <script src="https://pixijs.download/v7.4.0/pixi.min.js"></script>

@@ -1,21 +1,105 @@
 // Game configuration
 const gameConfig = {
-    width: 800,
-    height: 600,
+    width: Math.min(800, window.innerWidth),
+    height: Math.min(600, window.innerHeight),
     backgroundColor: 0x87CEEB,
-    resolution: 1,
-    antialias: false
+    resolution: window.devicePixelRatio || 1,
+    antialias: false,
+    powerPreference: 'high-performance'
 };
 
 // Global constants
 const PIXEL_SIZE = 4;
 
+// Calculate responsive dimensions
+function getResponsiveDimensions() {
+    const screenWidth = window.innerWidth;
+    const screenHeight = window.innerHeight;
+    
+    // Calculate scale factors
+    const scaleX = Math.min(1, screenWidth / 800);
+    const scaleY = Math.min(1, screenHeight / 600);
+    const scale = Math.min(scaleX, scaleY);
+    
+    return {
+        width: 800 * scale,
+        height: 600 * scale,
+        scale: scale
+    };
+}
+
 // Initialize PixiJS Application with pixel art settings
-const app = new PIXI.Application({
-    ...gameConfig,
-    resolution: window.devicePixelRatio || 1
-});
+const app = new PIXI.Application(gameConfig);
 document.getElementById('game-container').appendChild(app.view);
+
+// Handle window resize
+window.addEventListener('resize', () => {
+    const dimensions = getResponsiveDimensions();
+    
+    // Update game config
+    gameConfig.width = dimensions.width;
+    gameConfig.height = dimensions.height;
+    
+    // Resize renderer
+    app.renderer.resize(dimensions.width, dimensions.height);
+    
+    // Scale stage
+    app.stage.scale.set(dimensions.scale);
+    
+    // Update background
+    background.clear();
+    background.beginFill(0x87CEEB);
+    background.drawRect(0, 0, dimensions.width, dimensions.height);
+    background.beginFill(0x6CA6CD);
+    background.drawRect(0, dimensions.height / 2, dimensions.width, dimensions.height / 2);
+    
+    // Update grass
+    grass.clear();
+    for (let x = 0; x < dimensions.width / PIXEL_SIZE; x++) {
+        const height = 10 + Math.sin(x * 0.5) * 5;
+        for (let y = 0; y < height; y++) {
+            const colorIndex = Math.floor(Math.random() * grassColors.length);
+            grass.beginFill(grassColors[colorIndex]);
+            grass.drawRect(x * PIXEL_SIZE, dimensions.height - y * PIXEL_SIZE, PIXEL_SIZE, PIXEL_SIZE);
+        }
+    }
+    
+    // Update title position
+    title.position.set(dimensions.width / 2, 120 * dimensions.scale);
+    title.style.fontSize = Math.min(48, dimensions.height * 0.08);
+    
+    // Update subtitle position
+    subtitle.position.set(dimensions.width / 2, 200 * dimensions.scale);
+    subtitle.style.fontSize = Math.min(16, dimensions.height * 0.03);
+    
+    // Update buttons positions
+    const buttonSpacing = 60 * dimensions.scale;
+    const startY = 300 * dimensions.scale;
+    
+    startButton.position.set(dimensions.width / 2 - startButton.width / 2, startY);
+    mptionsButton.position.set(dimensions.width / 2 - mptionsButton.width / 2, startY + buttonSpacing);
+    optionsButton.position.set(dimensions.width / 2 - optionsButton.width / 2, startY + buttonSpacing * 2);
+    exitButton.position.set(dimensions.width / 2 - exitButton.width / 2, startY + buttonSpacing * 3);
+    
+    // Update cat position
+    if (cat) {
+        cat.position.set(dimensions.width - 150 * dimensions.scale, dimensions.height - 120 * dimensions.scale);
+    }
+    
+    // Update trees positions
+    trees.forEach((tree, index) => {
+        const x = (150 + index * 200) * dimensions.scale;
+        const y = dimensions.height - 180 * dimensions.scale;
+        tree.position.set(x, y);
+    });
+    
+    // Update fences positions
+    fences.forEach((fence, index) => {
+        const x = index * 100 * dimensions.scale;
+        const y = dimensions.height - 80 * dimensions.scale;
+        fence.position.set(x, y);
+    });
+});
 
 // Create retro background with gradient
 const background = new PIXI.Graphics();
@@ -108,10 +192,11 @@ app.stage.addChild(subtitle);
 // Create modern retro button
 function createButton(text, y) {
     const button = new PIXI.Container();
+    const dimensions = getResponsiveDimensions();
     
     // Button background with gradient
-    const buttonWidth = 250;
-    const buttonHeight = 40;
+    const buttonWidth = Math.min(250, dimensions.width * 0.8);
+    const buttonHeight = Math.min(40, dimensions.height * 0.08);
     
     // Main button background
     const background = new PIXI.Graphics();
@@ -125,8 +210,11 @@ function createButton(text, y) {
     shine.drawRect(0, 0, buttonWidth, buttonHeight / 2);
     shine.alpha = 0.3;
     
-    // Button text with pixel perfect positioning
-    const buttonText = new PIXI.Text(text, buttonStyle);
+    // Button text with responsive font size
+    const buttonText = new PIXI.Text(text, {
+        ...buttonStyle,
+        fontSize: Math.min(20, dimensions.height * 0.04)
+    });
     buttonText.anchor.set(0.5);
     buttonText.position.set(buttonWidth / 2, buttonHeight / 2);
     
@@ -135,7 +223,11 @@ function createButton(text, y) {
     button.addChild(buttonText);
     
     // Position the button
-    button.position.set(gameConfig.width / 2 - buttonWidth / 2, y);
+    button.position.set(dimensions.width / 2 - buttonWidth / 2, y);
+    
+    // Store button dimensions
+    button.width = buttonWidth;
+    button.height = buttonHeight;
     
     // Interactive properties
     button.eventMode = 'static';
@@ -157,10 +249,14 @@ function createButton(text, y) {
         buttonText.style.fill = '#FFFFFF';
     });
     
-    // Add click sound
-    button.on('pointerdown', () => {
+    // Add click sound and handle both mouse and touch events
+    const handleClick = () => {
         audioManager.playSound('click');
-    });
+    };
+    
+    button.on('pointerdown', handleClick);
+    button.on('pointerup', handleClick);
+    button.on('pointerupoutside', handleClick);
     
     return button;
 }
