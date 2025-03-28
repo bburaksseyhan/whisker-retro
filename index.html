@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Whisker Quest</title>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #87CEEB;
+            font-family: 'Press Start 2P', cursive;
+            overflow: hidden;
+        }
+        
+        #game-container {
+            position: relative;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        
+        canvas {
+            display: block;
+            image-rendering: pixelated;
+            image-rendering: crisp-edges;
+        }
+        
+        /* Retro scanline effect */
+        .scanlines {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                to bottom,
+                rgba(255, 255, 255, 0) 50%,
+                rgba(0, 0, 0, 0.05) 51%
+            );
+            background-size: 100% 4px;
+            pointer-events: none;
+            z-index: 10;
+            opacity: 0.3;
+        }
+        
+        /* CRT screen edge effect */
+        .crt-edge {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border-radius: 10px;
+            box-shadow: inset 0 0 100px rgba(0, 0, 0, 0.3);
+            pointer-events: none;
+            z-index: 9;
+        }
+        
+        /* Sound control button */
+        #sound-control {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 40px;
+            height: 40px;
+            background: rgba(0, 0, 0, 0.5);
+            border: 2px solid #FFF;
+            border-radius: 8px;
+            cursor: pointer;
+            z-index: 100;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: background-color 0.3s;
+        }
+        
+        #sound-control:hover {
+            background: rgba(0, 0, 0, 0.7);
+        }
+        
+        #sound-control.muted::after {
+            content: "🔇";
+            font-size: 20px;
+        }
+        
+        #sound-control:not(.muted)::after {
+            content: "🔊";
+            font-size: 20px;
+        }
+        
+        /* Glowing effect for the game container */
+        @keyframes glow {
+            0% { box-shadow: 0 0 20px rgba(0, 0, 0, 0.3); }
+            50% { box-shadow: 0 0 30px rgba(135, 206, 235, 0.5); }
+            100% { box-shadow: 0 0 20px rgba(0, 0, 0, 0.3); }
+        }
+        
+        #game-container {
+            animation: glow 3s infinite;
+        }
+    </style>
+    <script src="https://pixijs.download/v7.4.0/pixi.min.js"></script>
+</head>
+<body>
+    <div id="game-container">
+        <div id="sound-control"></div>
+        <div class="scanlines"></div>
+        <div class="crt-edge"></div>
+    </div>
+    <script src="js/audio.js"></script>
+    <script src="js/game.js"></script>
+</body>
+</html> 
